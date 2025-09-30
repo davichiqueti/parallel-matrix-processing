@@ -5,9 +5,6 @@
 #include <signal.h>
 
 
-#define POOL_SIZE 8
-
-
 struct AsyncResult {
     void *result;
     unsigned int ready;
@@ -30,8 +27,9 @@ struct TaskListRoot {
 };
 
 struct ThreadPool {
+    unsigned int size;
     unsigned short active;
-    pthread_t threads[POOL_SIZE];
+    pthread_t *threads;
     TaskListRoot task_list;
     pthread_mutex_t task_list_mutex;
 };
@@ -70,6 +68,7 @@ static void add(TaskListRoot *root, Task *task) {
 static void *consumer(void *arg) {
     ThreadPool *thread_pool = (void *)arg;
     while (thread_pool->active) {
+        // TODO: Usar semaforo para deixar a thread dormindo quando n tiver tasks na fila
         // Getting task from Queue
         pthread_mutex_lock(&thread_pool->task_list_mutex);
         Task *task = pop(&thread_pool->task_list);
@@ -83,14 +82,16 @@ static void *consumer(void *arg) {
     }
 }
 
-ThreadPool *thread_pool_init() {
+ThreadPool *thread_pool_init(unsigned int pool_size) {
     ThreadPool *thread_pool = malloc(sizeof(ThreadPool));
+    thread_pool->size = pool_size;
+    thread_pool->threads = (pthread_t*)calloc(pool_size, sizeof(pthread_t));
     thread_pool->active = 1;
     TaskListRoot task_list = {NULL, NULL};
     thread_pool->task_list = task_list;
     pthread_mutex_init(&thread_pool->task_list_mutex, NULL);
     // Initializing 
-    for (int i = 0; i < POOL_SIZE; i++) {
+    for (int i = 0; i < pool_size; i++) {
         pthread_create(
             &thread_pool->threads[i],
             NULL,
@@ -102,6 +103,8 @@ ThreadPool *thread_pool_init() {
 }
 
 void *get(AsyncResult *result) {
+    // TODO: falar com professor odorico para pensar em forma de esperar pelo resultado
+    // Comentar que pensei em usar uma mutex mas se a thread consumidora morrer isso poderia esperar para sempre
     while (result->ready != 1) {
         continue;
     }
@@ -127,7 +130,7 @@ AsyncResult *thread_pool_execute(ThreadPool *pool, void *(*function)(void *), vo
 
 void thread_pool_kill(ThreadPool *thread_pool) {
     thread_pool->active = 0;
-    for (int i = 0; i < POOL_SIZE; i++) {
+    for (int i = 0; i < thread_pool->size; i++) {
         pthread_join(thread_pool->threads[i], NULL);
     }
 }
@@ -137,7 +140,7 @@ void thread_pool_join(ThreadPool *thread_pool) {
         continue;
     }
     thread_pool->active = 0;
-    for (int i = 0; i < POOL_SIZE; i++) {
+    for (int i = 0; i < thread_pool->size; i++) {
         pthread_join(thread_pool->threads[i], NULL);
     }
 }

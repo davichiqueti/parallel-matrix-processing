@@ -42,10 +42,10 @@ void *sum_print(void *arg) {
 }
 
 void operate() {
-    ThreadPool *thread_pool = thread_pool_init();
+    int pool_size = 8;
+    ThreadPool *thread_pool = thread_pool_init(pool_size);
     AsyncResult *results[ROWS];
     for (int i = 0; i < ROWS; i++) {
-        // results[i] = thread_pool_execute(thread_pool, sort, (void *)matrix[i]);
         int *value = malloc(sizeof(int));
         *value = i;
         results[i] = thread_pool_execute(thread_pool, sum_print, (void *)value);
