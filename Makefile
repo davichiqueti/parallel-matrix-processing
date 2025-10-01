@@ -15,7 +15,7 @@ r-parallel:
 	./parallel.exe
 
 b-threadpool:
-	gcc thread-pool/main.c thread-pool/threadpoolapi.c -o thread-pool/main.exe
+	gcc thread-pool/main.c thread-pool/threadpoolapi.c thread-pool/blockingqueue.c -o thread-pool/main.exe
 
 r-threadpool:
 	./thread-pool/main.exe

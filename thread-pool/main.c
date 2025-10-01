@@ -50,7 +50,7 @@ void operate() {
         *value = i;
         results[i] = thread_pool_execute(thread_pool, sum_print, (void *)value);
     }
-    thread_pool_join(thread_pool);
+    thread_pool_destroy(thread_pool);
     for (int i = 0; i < ROWS; i++) {
         AsyncResult *async_result = results[i];
         int *returned_value = get(async_result);
@@ -61,7 +61,7 @@ void operate() {
 int main() {
     srand(time(NULL));
     // Initializing the matrix
-    initialize_matrix();
+    // initialize_matrix();
 
     clock_t start, end;
     start = clock();    
