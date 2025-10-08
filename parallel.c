@@ -4,17 +4,17 @@
 #include <pthread.h>
 
 
-#define ROWS 8
-#define COLS 100000
+#define ARRAYS_NUMBER 16
+#define ARRAY_SIZE 200000
 
 
-int matrix[ROWS][COLS];
+int matrix[ARRAYS_NUMBER][ARRAY_SIZE];
 
 
 void initialize_matrix() {
-    for (int i = 0; i < ROWS; i++) {
-        for (int j = 0; j < COLS; j++) {
-            matrix[i][j] = rand();
+    for (int i = 0; i < ARRAYS_NUMBER; i++) {
+        for (int j = 0; j < ARRAY_SIZE; j++) {
+            matrix[i][j] = j;
         }
     }
 }
@@ -22,8 +22,8 @@ void initialize_matrix() {
 void *sort(void *arg) {
     int *array = (int *)arg;
     int temp;
-    for (int i = 0; i < COLS; i++) {
-        for (int j = 0; j < COLS - i - 1;j++) {
+    for (int i = 0; i < ARRAY_SIZE; i++) {
+        for (int j = 0; j < ARRAY_SIZE - i - 1; j++) {
             if (array[j] < array[j + 1]) {
                 temp = array[j + 1];
                 array[j + 1] = array[j];
@@ -31,21 +31,21 @@ void *sort(void *arg) {
             }
         }
     }
+    return NULL;
 }
 
 void operate() {
-    pthread_t threads[ROWS];
-    for (int i = 0; i < ROWS; i++) {
+    pthread_t threads[ARRAYS_NUMBER];
+    for (int i = 0; i < ARRAYS_NUMBER; i++) {
         pthread_create(&threads[i], NULL, sort, (void *)matrix[i]);
     }
 
-    for (int i = 0; i < ROWS; i++) {
+    for (int i = 0; i < ARRAYS_NUMBER; i++) {
         pthread_join(threads[i], NULL);
     }
 }
 
 int main() {
-    srand(time(NULL));
     // Initializing the matrix
     initialize_matrix();
 

@@ -4,17 +4,18 @@
 #include <time.h>
 
 
-#define ROWS 8
-#define COLS 100000
+#define THREADS_NUMBER 8
+#define ARRAYS_NUMBER 16
+#define ARRAY_SIZE 200000
 
 
-int matrix[ROWS][COLS];
+int matrix[ARRAYS_NUMBER][ARRAY_SIZE];
 
 
 void initialize_matrix() {
-    for (int i = 0; i < ROWS; i++) {
-        for (int j = 0; j < COLS; j++) {
-            matrix[i][j] = rand();
+    for (int i = 0; i < ARRAYS_NUMBER; i++) {
+        for (int j = 0; j < ARRAY_SIZE; j++) {
+            matrix[i][j] = j;
         }
     }
 }
@@ -22,8 +23,8 @@ void initialize_matrix() {
 void *sort(void *arg) {
     int *array = (int *)arg;
     int temp;
-    for (int i = 0; i < COLS; i++) {
-        for (int j = 0; j < COLS - i - 1;j++) {
+    for (int i = 0; i < ARRAY_SIZE; i++) {
+        for (int j = 0; j < ARRAY_SIZE - i - 1; j++) {
             if (array[j] < array[j + 1]) {
                 temp = array[j + 1];
                 array[j + 1] = array[j];
@@ -31,6 +32,7 @@ void *sort(void *arg) {
             }
         }
     }
+    return NULL;
 }
 
 void *sum_print(void *arg) {
@@ -42,26 +44,18 @@ void *sum_print(void *arg) {
 }
 
 void operate() {
-    int pool_size = 8;
-    ThreadPool *thread_pool = thread_pool_init(pool_size);
-    AsyncResult *results[ROWS];
-    for (int i = 0; i < ROWS; i++) {
+    ThreadPool *thread_pool = thread_pool_init(THREADS_NUMBER);
+    for (int i = 0; i < ARRAYS_NUMBER; i++) {
         int *value = malloc(sizeof(int));
         *value = i;
-        results[i] = thread_pool_execute(thread_pool, sum_print, (void *)value);
+        thread_pool_execute(thread_pool, sort, (void *)matrix[i]);
     }
     thread_pool_destroy(thread_pool);
-    for (int i = 0; i < ROWS; i++) {
-        AsyncResult *async_result = results[i];
-        int *returned_value = get(async_result);
-        printf("Result value returned: %d\n", *returned_value);
-    }
 }
 
 int main() {
-    srand(time(NULL));
     // Initializing the matrix
-    // initialize_matrix();
+    initialize_matrix();
 
     clock_t start, end;
     start = clock();    

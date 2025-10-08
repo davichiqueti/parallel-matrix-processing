@@ -1,21 +1,25 @@
-b-sequential:
+
+c-sequential:	# Compile Sequential Solution
 	# Building sequential solution
 	gcc sequential.c -o sequential.exe
 
-r-sequential:
-	# Running sequential solution
-	./sequential.exe
-
-b-parallel:
+c-parallel:		# Compile Parallel Solution
 	# Building parallel solution
 	gcc parallel.c -o parallel.exe
 
-r-parallel:
-	# Running parallel solution
-	./parallel.exe
-
-b-threadpool:
+c-threadpool:	# Compile Thread Pool API Solution
 	gcc thread-pool/main.c thread-pool/threadpoolapi.c thread-pool/blockingqueue.c -o thread-pool/main.exe
 
-r-threadpool:
+c-all:	# Compile All
+	$(MAKE) c-sequential
+	$(MAKE) c-parallel
+	$(MAKE) c-threadpool
+
+r-sequential:	# Run Sequential Solution
+	./sequential.exe
+
+r-parallel:		# Run Parallel Solution
+	./parallel.exe
+
+r-threadpool:	# Run Thread Pool API Solution
 	./thread-pool/main.exe

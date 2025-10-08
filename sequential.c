@@ -2,25 +2,25 @@
 #include <stdio.h>
 #include <time.h>
 
-#define ROWS 8
-#define COLS 100000
 
+#define ARRAYS_NUMBER 16
+#define ARRAY_SIZE 200000
 
-int matrix[ROWS][COLS];
+int matrix[ARRAYS_NUMBER][ARRAY_SIZE];
 
 
 void initialize_matrix() {
-    for (int i = 0; i < ROWS; i++) {
-        for (int j = 0; j < COLS; j++) {
-            matrix[i][j] = rand();
+    for (int i = 0; i < ARRAYS_NUMBER; i++) {
+        for (int j = 0; j < ARRAY_SIZE; j++) {
+            matrix[i][j] = j;
         }
     }
 }
 
 void sort(int array[]) {
     int temp;
-    for (int i = 0; i < COLS; i++) {
-        for (int j = 0; j < COLS - i - 1;j++) {
+    for (int i = 0; i < ARRAY_SIZE; i++) {
+        for (int j = 0; j < ARRAY_SIZE - i - 1; j++) {
             if (array[j] < array[j + 1]) {
                 temp = array[j + 1];
                 array[j + 1] = array[j];
@@ -31,13 +31,12 @@ void sort(int array[]) {
 }
 
 void operate() {
-    for (int i = 0; i < ROWS; i++) {
+    for (int i = 0; i < ARRAYS_NUMBER; i++) {
         sort(matrix[i]);
     }
 }
 
 int main() {
-    srand(time(NULL));
     // Initializing the matrix
     initialize_matrix();
 
@@ -46,7 +45,7 @@ int main() {
     operate();
     end = clock();
 
-    double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC; 
+    double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
     printf("Execution time: %f\n", cpu_time_used);
     return 0;
 }
