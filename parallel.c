@@ -79,9 +79,10 @@ int main(int argc, char *argv[]) {
 
     double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC; 
     printf(
-        "[Parallel Solution] Sorted %d Arrays of size size %d. Time: %f\n",
+        "[Parallel Solution] Sorted %d Arrays of size size %d. Using %d threads. Time: %f\n",
         rows,
         cols,
+        threads_number,
         cpu_time_used
     );
     
