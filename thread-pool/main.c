@@ -4,27 +4,34 @@
 #include <time.h>
 
 
-#define THREADS_NUMBER 8
-#define ARRAYS_NUMBER 16
-#define ARRAY_SIZE 200000
-
-
-int matrix[ARRAYS_NUMBER][ARRAY_SIZE];
+int threads_number;
+int **matrix;
+int rows;
+int cols;
 
 
 void initialize_matrix() {
-    for (int i = 0; i < ARRAYS_NUMBER; i++) {
-        for (int j = 0; j < ARRAY_SIZE; j++) {
+    matrix = (int **)malloc(rows*sizeof(int*));
+    for (int i = 0; i < rows; i++) {
+        matrix[i] = (int *)malloc (cols*sizeof(int));
+        for (int j = 0; j < cols; j++) {
             matrix[i][j] = j;
         }
     }
 }
 
+void free_matrix() {
+    for (int i = 0; i < rows; i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
+}
+
 void *sort(void *arg) {
     int *array = (int *)arg;
     int temp;
-    for (int i = 0; i < ARRAY_SIZE; i++) {
-        for (int j = 0; j < ARRAY_SIZE - i - 1; j++) {
+    for (int i = 0; i < cols; i++) {
+        for (int j = 0; j < cols - i - 1; j++) {
             if (array[j] < array[j + 1]) {
                 temp = array[j + 1];
                 array[j + 1] = array[j];
@@ -32,29 +39,25 @@ void *sort(void *arg) {
             }
         }
     }
-    return NULL;
-}
-
-void *sum_print(void *arg) {
-    int *received = (int *)arg;
-    int *calculated = malloc(sizeof(int));
-    *calculated = *received * 2;
-    printf("Received: %d Calculated: %d\n", *received, *calculated);
-    return (void *)calculated;
 }
 
 void operate() {
-    ThreadPool *thread_pool = thread_pool_init(THREADS_NUMBER);
-    for (int i = 0; i < ARRAYS_NUMBER; i++) {
-        int *value = malloc(sizeof(int));
-        *value = i;
+    ThreadPool *thread_pool = thread_pool_init(threads_number);
+    for (int i = 0; i < rows; i++) {
         thread_pool_execute(thread_pool, sort, (void *)matrix[i]);
     }
     thread_pool_destroy(thread_pool);
 }
 
-int main() {
-    // Initializing the matrix
+int main(int argc, char *argv[]) {
+    if (argc < 4) {
+        printf("[Thread Pool API Solution] Must supply rows number, cols number and threads number arguments\n");
+        return -1;
+    }
+
+    rows = atoi(argv[1]);
+    cols = atoi(argv[2]);
+    threads_number = atoi(argv[3]);
     initialize_matrix();
 
     clock_t start, end;
@@ -63,6 +66,13 @@ int main() {
     end = clock();
 
     double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC; 
-    printf("Execution time: %f\n", cpu_time_used);
+    printf(
+        "[Thread Pool API Solution] Sorted %d Arrays of size size %d. Time: %f\n",
+        rows,
+        cols,
+        cpu_time_used
+    );
+
+    free_matrix();
     return 0;
 }

@@ -1,3 +1,5 @@
+LOG_FILE = .log
+
 
 c-sequential:	# Compile Sequential Solution
 	# Building sequential solution
@@ -16,10 +18,10 @@ c-all:	# Compile All
 	$(MAKE) c-threadpool
 
 r-sequential:	# Run Sequential Solution
-	./sequential.exe
+	./sequential.exe $(rows) $(cols) >> $(LOG_FILE)
 
 r-parallel:		# Run Parallel Solution
-	./parallel.exe
+	./parallel.exe $(rows) $(cols) $(threads) >> $(LOG_FILE)
 
 r-threadpool:	# Run Thread Pool API Solution
-	./thread-pool/main.exe
+	./thread-pool/main.exe $(rows) $(cols) $(threads) >> $(LOG_FILE)

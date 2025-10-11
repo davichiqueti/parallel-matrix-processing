@@ -4,26 +4,33 @@
 #include <pthread.h>
 
 
-#define ARRAYS_NUMBER 16
-#define ARRAY_SIZE 200000
-
-
-int matrix[ARRAYS_NUMBER][ARRAY_SIZE];
+int threads_number;
+int **matrix;
+int rows;
+int cols;
 
 
 void initialize_matrix() {
-    for (int i = 0; i < ARRAYS_NUMBER; i++) {
-        for (int j = 0; j < ARRAY_SIZE; j++) {
+    matrix = (int **)malloc(rows*sizeof(int*));
+    for (int i = 0; i < rows; i++) {
+        matrix[i] = (int *)malloc (cols*sizeof(int));
+        for (int j = 0; j < cols; j++) {
             matrix[i][j] = j;
         }
     }
 }
 
-void *sort(void *arg) {
-    int *array = (int *)arg;
+void free_matrix() {
+    for (int i = 0; i < rows; i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
+}
+
+void sort(int array[]) {
     int temp;
-    for (int i = 0; i < ARRAY_SIZE; i++) {
-        for (int j = 0; j < ARRAY_SIZE - i - 1; j++) {
+    for (int i = 0; i < cols; i++) {
+        for (int j = 0; j < cols - i - 1; j++) {
             if (array[j] < array[j + 1]) {
                 temp = array[j + 1];
                 array[j + 1] = array[j];
@@ -31,22 +38,38 @@ void *sort(void *arg) {
             }
         }
     }
-    return NULL;
+}
+
+void *thread_function(void *arg) {
+    int thread_id = *((int *)arg);
+
+    for (int i = thread_id; i < rows; i += threads_number) {
+        sort(matrix[i]);
+    }
 }
 
 void operate() {
-    pthread_t threads[ARRAYS_NUMBER];
-    for (int i = 0; i < ARRAYS_NUMBER; i++) {
-        pthread_create(&threads[i], NULL, sort, (void *)matrix[i]);
+    int nums[threads_number];
+    pthread_t threads[threads_number];
+    for (int i = 0; i < threads_number; i++) {
+        nums[i] = i;
+        pthread_create(&threads[i], NULL, thread_function, (void *)&nums[i]);
     }
 
-    for (int i = 0; i < ARRAYS_NUMBER; i++) {
+    for (int i = 0; i < threads_number; i++) {
         pthread_join(threads[i], NULL);
     }
 }
 
-int main() {
-    // Initializing the matrix
+int main(int argc, char *argv[]) {
+    if (argc < 4) {
+        printf("[Parallel Solution] Must supply rows number, cols number and threads number arguments\n");
+        return -1;
+    }
+
+    rows = atoi(argv[1]);
+    cols = atoi(argv[2]);
+    threads_number = atoi(argv[3]);
     initialize_matrix();
 
     clock_t start, end;
@@ -55,6 +78,13 @@ int main() {
     end = clock();
 
     double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC; 
-    printf("Execution time: %f\n", cpu_time_used);
+    printf(
+        "[Parallel Solution] Sorted %d Arrays of size size %d. Time: %f\n",
+        rows,
+        cols,
+        cpu_time_used
+    );
+    
+    free_matrix();
     return 0;
 }
