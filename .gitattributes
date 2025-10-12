@@ -2,3 +2,4 @@
 * text=auto
 
 *.ipynb -linguist-detectable
+.sh -linguist-detectable
