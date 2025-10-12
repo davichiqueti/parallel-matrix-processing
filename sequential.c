@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
+#include <sys/time.h>
 
 
 int **matrix;
@@ -54,17 +54,20 @@ int main(int argc, char *argv[]) {
     cols = atoi(argv[2]);
     initialize_matrix();
 
-    clock_t start, end;
-    start = clock();    
+    struct timeval start, end;
+    gettimeofday(&start, NULL);
+    // Operate on Matrix
     operate();
-    end = clock();
+    gettimeofday(&end, NULL);
+    long seconds = end.tv_sec - start.tv_sec;
+    long microseconds = end.tv_usec - start.tv_usec;
+    double elapsed_time = seconds + microseconds / 1000000.0;
 
-    double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
     printf(
-        "[Sequential Solution] Sorted %d Arrays of size size %d. Time: %f\n",
+        "[Sequential Solution] Sorted %d Arrays of size size %d. Time in seconds: %.6f\n",
         rows,
         cols,
-        cpu_time_used
+        elapsed_time
     );
 
     free_matrix();
