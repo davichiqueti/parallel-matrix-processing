@@ -15,7 +15,7 @@ void initialize_matrix() {
     for (int i = 0; i < rows; i++) {
         matrix[i] = (int *)malloc (cols*sizeof(int));
         for (int j = 0; j < cols; j++) {
-            matrix[i][j] = j;
+            matrix[i][j] = cols - j;
         }
     }
 }
