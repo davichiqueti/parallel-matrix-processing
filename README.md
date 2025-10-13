@@ -10,6 +10,7 @@ To check all the full commands or run them directly, see the [Makefile](./Makefi
 # Compile a specific version
 make c-[sequential / parallel / threadpool]
 # Compile all versions code
+make c-all
 
 # Running sequential version
 make r-sequential rows=$ROWS cols=$COLS
