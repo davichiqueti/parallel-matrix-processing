@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
     threads_number = atoi(argv[3]);
     initialize_matrix();
 
-     struct timeval start, end;
+    struct timeval start, end;
     gettimeofday(&start, NULL);
     // Operate on Matrix
     operate();
