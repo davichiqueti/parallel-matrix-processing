@@ -1,6 +1,6 @@
 # Parallel Arrays Sorting
 
-This repository is dedicated to a project to the "Parallel and Distributed Programming" subject in my bacharelal course.
+This repository contains a course project for Parallel and Distributed Programming. The goal is to analyze the same task implemented in three ways: a sequential baseline, a parallel version using manual threads, and a version built on a custom parallel programming pattern (a thread pool with blocking queue).
 
 The idea is to make analysis of a same problem solved with sequential programming, parallel programing and using a parallel programming pattern implemented by me.
 The problem used was sorting N arrays with same size using bubble sort, that have O(N) of computational complexity.
