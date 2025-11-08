@@ -7,11 +7,11 @@ The problem used was sorting N arrays with same size using bubble sort, that hav
 
 All versions were tested with different N number of arrays to be sorted. Also both the Parallel and Thread Pool solutions were tested with different threads number.
 
-### Sequential Implementation. [(See Implementation)](sequential-solution)
+### Sequential Implementation. [(See Implementation)](sequential/)
 
 The simplest way of solving the problem, used as a base in speed up analysis. This version just applies the bubble sort algorithm for each one of the arrays, one by one.
 
-### Parallel Implementation. [(See Implementation)](parallel-solution)
+### Parallel Implementation. [(See Implementation)](parallel/)
 
 Dividing the arrays to be sorted in multiple threads to be sorted.
 
