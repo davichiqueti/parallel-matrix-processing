@@ -17,8 +17,6 @@ Dividing the arrays to be sorted in multiple threads to be sorted.
 
 ### Thread Pool Pattern Implementation. [(See Implementation)](thread-pool/)
 
-A reusable C library .
-
 In this version I implemented a reusable C library that abstracts thread management via a pool.
 Exposing only key methods to the user in the [header file](thread-pool/threadpoolapi.h):
 
